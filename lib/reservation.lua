@@ -2,11 +2,7 @@
 local Reservation = {}
 
 -- Static list of reservations (placeholder for data persistence)
-Reservation.reservations = {
-    { name = "Player1", room = 101, checkIn = "2023-08-10", checkOut = "2023-08-15" },
-    { name = "Player2", room = 102, checkIn = "2023-08-12", checkOut = nil },
-    -- Add more reservations here...
-}
+Reservation.reservations = {}
 
 -- Constructor (Initializer)
 function Reservation.new(name, room, checkIn, checkOut)
@@ -18,6 +14,8 @@ function Reservation.new(name, room, checkIn, checkOut)
     self.checkIn = checkIn
     self.checkOut = checkOut
 
+    table.insert(Reservation.reservations, self)
+
     return self
 end
 
@@ -26,13 +24,24 @@ local function areDateRangesOverlapping(range1Start, range1End, range2Start, ran
 end
 
 -- Function to validate date format (mm/dd/yyyy or mm-dd-yyyy)
-function Reservation:isValidDateFormat(date)
-    print("Checking date: " .. date)
-    if not date then return false end
-    return date:match("^%d%d/%d%d/%d%d%d%d$") ~= nil
+local function isValidDateFormat(dateString)
+    if not dateString then return false end
+    return dateString:match("^%d%d/%d%d/%d%d%d%d$") ~= nil
+end
+
+function Reservation:toString()
+    local function formatDate(date)
+        return string.format("%04d-%02d-%02d", date.year, date.month, date.day)
+    end
+
+    local checkOutStr = self.checkOut and formatDate(self.checkOut) or "N/A" -- If checkOut is nil, display "N/A" instead
+
+    return "Reservation for " .. self.name .. " - Room " .. self.room ..
+           ", Check-in: " .. formatDate(self.checkIn) .. ", Check-out: " .. checkOutStr
 end
 
 function Reservation:isRoomAvailable(room, checkIn, checkOut)
+    if not self.reservations then return true end  -- there are no reservations
     for _, reservation in pairs(self.reservations) do
         if  reservation.room == room 
             and areDateRangesOverlapping(checkIn, checkOut, reservation.checkIn, reservation.checkOut) then
@@ -56,8 +65,11 @@ function Reservation:promptReservation()
     -- Get check-in date
     io.write("Enter check-in date (mm/dd/yyyy): ")
     local checkInDateInput
-    while not checkInDateInput or not self.isValidDateFormat(checkInDateInput) do
+    while not checkInDateInput or not isValidDateFormat(checkInDateInput) do
         checkInDateInput = io.read()
+        if not isValidDateFormat(checkInDateInput) then
+            print("Invalid date format... please try again: ")
+        end
     end
     local month, day, year = checkInDateInput:match("(%d+)/(%d+)/(%d+)")
     userInfo.checkInDate = {
@@ -69,8 +81,11 @@ function Reservation:promptReservation()
     -- Get check-out date
     io.write("Enter check-out date (mm/dd/yyyy): ")
     local checkOutDateInput
-    while not checkOutDateInput or not self.isValidDateFormat(checkOutDateInput) do
+    while not checkOutDateInput or not isValidDateFormat(checkOutDateInput) do
         checkOutDateInput = io.read()
+        if not isValidDateFormat(checkOutDateInput) then
+            print("Invalid date format... please try again: ")
+        end
     end
     local month, day, year = checkOutDateInput:match("(%d+)/(%d+)/(%d+)")
     userInfo.checkOutDate = {
