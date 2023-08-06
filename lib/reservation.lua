@@ -83,7 +83,9 @@ function Reservation.isRoomAvailable(strRoom, strCheckIn, strCheckOut)
         local intReservationCheckout = convertDatetoInt(reservation.checkOut)
         
         if  reservation.room == strRoom 
-            and areRangesOverlapping(intCheckIn, intCheckOut, intReservationCheckIn, intReservationCheckout) then
+            and reservation.status == "Active"
+            and areRangesOverlapping(intCheckIn, intCheckOut, intReservationCheckIn, intReservationCheckout) 
+        then
             return false
         end
     end
@@ -92,7 +94,7 @@ end
 
 function Reservation.getReservationByConfirmation(intConfirmationNumber)
     for _, reservation in pairs(Reservation.reservations) do
-        if reservation.confirmationNumber == intConfirmationNumber then
+        if tonumber(reservation.confirmationNumber) == tonumber(intConfirmationNumber) then
             return reservation
         end
     end
@@ -108,7 +110,7 @@ function Reservation:toCsvString()
 end
 
 function Reservation:toString()
-    return "Res #" .. self.confirmationNumber .. " for " .. self.name .. ": " .. self.status .. "\n" ..  
+    return "Reservation #" .. self.confirmationNumber .. " for " .. self.name .. ": " .. self.status .. "\n" ..  
         "Room " .. self.room .. ", " .. self.checkIn .. " to " .. self.checkOut
 end
 
@@ -193,6 +195,7 @@ function Reservation.promptDateChange(intConfirmationNumber)
 
     print("Dates updated.")
 
+    Reservation.exportCsv()
     return true
 end
 

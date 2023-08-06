@@ -2,12 +2,12 @@
 local Reservation = require("lib.reservation")
 
 -- Main program
+term.clear()
 print(" - Welcome to CakeReserve v1.0 - \n")
 
 Reservation.importCsv()
 
-local HOTEL_NAME = "Rainbow Hotel"
-local PRINTER_NAME = "printer_0"
+local PRINTER_NAME = "printer_1"
 local choice = 0
 
 while choice ~= 4 do
@@ -31,49 +31,46 @@ while choice ~= 4 do
             print()
             print(tblReservation:toString())
             print()
-            io.write("Would you like to edit? (y/n) ")
-            local strChoice = io.read()
-            if strChoice ~= "N" or strChoice ~= "n" then
-                print()
-                print("1 - Close reservation")
-                print("2 - Cancel reservation")
-                print("3 - Activate reservation")
-                print("4 - Edit name")
-                print("5 - Edit room")
-                print("6 - Edit dates")
-                print("Q - Do not edit")
+            print("1 - Close reservation")
+            print("2 - Cancel reservation")
+            print("3 - Activate reservation")
+            print("4 - Edit name")
+            print("5 - Edit room")
+            print("6 - Edit dates")
+            print("Q - Do not edit")
 
-                io.write("\nEnter your choice: ")
-                local strEditChoice = io.read()
+            io.write("\nEnter your choice: ")
+            local strEditChoice = io.read()
 
-                if strEditChoice == "1" then
-                    tblReservation.status = "Closed"
-                    print("Reservation #" .. tblReservation.confirmationNumber .. " has been closed.")
-                elseif strEditChoice == "2" then
-                    tblReservation.status = "Cancelled"
-                    print("Reservation #" .. tblReservation.confirmationNumber .. " has been cancelled.")
-                elseif strEditChoice == "3" then
-                    tblReservation.status = "Active"
-                    print("Reservation #" .. tblReservation.confirmationNumber .. " has been set to active.")
-                elseif strEditChoice == "4" then
-                    io.write("Enter new name: ")
-                    tblReservation.name = io.read()
-                    print("Reservation #" .. tblReservation.confirmationNumber .. "'s name has been set to " .. tblReservation.name .. ".")
-                elseif strEditChoice == "5" then
-                    io.write("Enter new room: ")
-                    local strRoom = io.read()
-                    if Reservation.isRoomAvailable(strRoom, tblReservation.checkIn, tblReservation.checkOut) then
-                        tblReservation.room = strRoom
-                        print("Reservation #" .. tblReservation.confirmationNumber .. "'s room has been set to " .. tblReservation.room .. ".")
-                    else
-                        print(strRoom .. " is not available.")
-                    end
-                elseif strEditChoice == "6" then
-                    Reservation.promptDateChange(intReservationNumber)
-                    print("")
-                    print(tblReservation:toString())
+            if strEditChoice == "1" then
+                tblReservation.status = "Closed"
+                print("Reservation #" .. tblReservation.confirmationNumber .. " has been closed.")
+            elseif strEditChoice == "2" then
+                tblReservation.status = "Cancelled"
+                print("Reservation #" .. tblReservation.confirmationNumber .. " has been cancelled.")
+            elseif strEditChoice == "3" then
+                tblReservation.status = "Active"
+                print("Reservation #" .. tblReservation.confirmationNumber .. " has been set to active.")
+            elseif strEditChoice == "4" then
+                io.write("Enter new name: ")
+                tblReservation.name = io.read()
+                print("Reservation #" .. tblReservation.confirmationNumber .. "'s name has been set to " .. tblReservation.name .. ".")
+            elseif strEditChoice == "5" then
+                io.write("Enter new room: ")
+                local strRoom = io.read()
+                if Reservation.isRoomAvailable(strRoom, tblReservation.checkIn, tblReservation.checkOut) then
+                    tblReservation.room = strRoom
+                    print("Reservation #" .. tblReservation.confirmationNumber .. "'s room has been set to " .. tblReservation.room .. ".")
+                else
+                    print(strRoom .. " is not available.")
                 end
+            elseif strEditChoice == "6" then
+                Reservation.promptDateChange(intReservationNumber)
+                print("")
+                print(tblReservation:toString())
             end
+        else
+            print("Reservation #" .. intReservationNumber .. " not found!")
         end
     elseif strChoice == "3" then
         Reservation.sortByCheckIn()
@@ -101,8 +98,10 @@ while choice ~= 4 do
             end
 
             if tblPrinter.newPage() then
+                tblPrinter.setPageTitle("Reservation #" .. tblReservation.confirmationNumber)
+
                 tblPrinter.setCursorPos(1, 1)
-                tblPrinter.write(" -- Reservation -- ")
+                tblPrinter.write(" - Reservation Receipt - ")
                 
                 tblPrinter.setCursorPos(1, 3)
                 tblPrinter.write("Confirmation #: " .. tblReservation.confirmationNumber)
@@ -111,20 +110,22 @@ while choice ~= 4 do
                 tblPrinter.write("Guest: " .. tblReservation.name)
 
                 tblPrinter.setCursorPos(1, 5)
-                tblPrinter.write("Room: " .. tblReservation.room)
+                tblPrinter.write("Room:  " .. tblReservation.room)
 
                 tblPrinter.setCursorPos(1, 7)
-                tblPrinter.write("Status: " .. tblReservation.status)
+                tblPrinter.write("Status:    " .. tblReservation.status)
 
                 tblPrinter.setCursorPos(1, 9)
-                tblPrinter.write("Check-in: " .. tblReservation.checkIn)
+                tblPrinter.write("Check-in:  " .. tblReservation.checkIn)
                 tblPrinter.setCursorPos(1, 10)
                 tblPrinter.write("Check-out: " .. tblReservation.checkOut)
 
                 tblPrinter.setCursorPos(1, 12)
-                tblPrinter.write("Thank you for staying")
+                tblPrinter.write("  Thank you for booking  ")
                 tblPrinter.setCursorPos(1, 13)
-                tblPrinter.write("with us!")
+                tblPrinter.write("          at the         ")
+                tblPrinter.setCursorPos(1, 14)
+                tblPrinter.write("      Rainbow Hotel!     ")
 
                 tblPrinter.endPage()
 
