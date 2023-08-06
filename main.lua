@@ -104,26 +104,26 @@ while choice ~= 4 do
                 tblPrinter.setCursorPos(1, 1)
                 tblPrinter.write(" -- Reservation -- ")
                 
-                tblPrinter.setCursorPos(3, 1)
+                tblPrinter.setCursorPos(1, 3)
                 tblPrinter.write("Confirmation #: " .. tblReservation.confirmationNumber)
 
-                tblPrinter.setCursorPos(4, 1)
+                tblPrinter.setCursorPos(1, 4)
                 tblPrinter.write("Guest: " .. tblReservation.name)
 
-                tblPrinter.setCursorPos(5, 1)
+                tblPrinter.setCursorPos(1, 5)
                 tblPrinter.write("Room: " .. tblReservation.room)
 
-                tblPrinter.setCursorPos(7, 1)
+                tblPrinter.setCursorPos(1, 7)
                 tblPrinter.write("Status: " .. tblReservation.status)
 
-                tblPrinter.setCursorPos(9, 1)
+                tblPrinter.setCursorPos(1, 9)
                 tblPrinter.write("Check-in: " .. tblReservation.checkIn)
-                tblPrinter.setCursorPos(10, 1)
+                tblPrinter.setCursorPos(1, 10)
                 tblPrinter.write("Check-out: " .. tblReservation.checkOut)
 
-                tblPrinter.setCursorPos(12, 1)
+                tblPrinter.setCursorPos(1, 12)
                 tblPrinter.write("Thank you for staying")
-                tblPrinter.setCursorPos(13, 1)
+                tblPrinter.setCursorPos(1, 13)
                 tblPrinter.write("with us!")
 
                 tblPrinter.endPage()
